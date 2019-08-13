@@ -8,3 +8,5 @@ Igor Levin (Игорь Левин)
 
 ilevin.office@gmail.com
 
+Приложение "Прогноз погоды"
+
