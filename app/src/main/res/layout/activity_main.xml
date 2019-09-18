@@ -8,12 +8,23 @@
         tools:context=".MainActivity">
 
     <TextView
+            android:id="@+id/tvText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hello World!"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+    <ru.igor.levin.weatherforecast.ProgressView
+            android:id="@+id/progress"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
