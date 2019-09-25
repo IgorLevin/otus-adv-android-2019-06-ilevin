@@ -5,7 +5,11 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AnticipateInterpolator
+import android.view.animation.AnticipateOvershootInterpolator
 
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
@@ -36,6 +40,16 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         strokeWidth = 4f
     }
 
+    private lateinit var animator: ValueAnimator
+
+    private val onDownListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDown(e: MotionEvent?): Boolean {
+            return true
+        }
+    }
+
+    private val detector: GestureDetector = GestureDetector(context, onDownListener)
+
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.ProgressView, 0, 0).apply {
             try {
@@ -45,17 +59,37 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
             }
         }
 
-        ValueAnimator.ofFloat(0f, 359f).apply {
+        animator = ValueAnimator.ofFloat(0f, 359f).apply {
+            interpolator = AnticipateOvershootInterpolator()
             duration = 10000
+            repeatCount = ValueAnimator.INFINITE
             addUpdateListener {
                 phase = it.animatedValue as Float
                 invalidate()
             }
-            start()
         }
     }
 
-//    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    fun startProgress() {
+        animator.start()
+    }
+
+    fun stopProgress() {
+        animator.cancel()
+    }
+
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return detector.onTouchEvent(event).let {result ->
+            if (result) {
+                startProgress()
+                true
+            } else
+                false
+        }
+    }
+
+    //    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
 //        super.onSizeChanged(w, h, oldw, oldh)
 //
 //        center = PointF((w/2).toFloat(), (h/2).toFloat())
@@ -64,6 +98,8 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 //    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 //        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 //    }
+
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
