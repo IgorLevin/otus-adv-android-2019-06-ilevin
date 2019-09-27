@@ -1,6 +1,6 @@
 package ru.igor.levin.weatherforecast
 
-import android.animation.ValueAnimator
+import android.animation.*
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.*
@@ -9,52 +9,36 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AnticipateInterpolator
-import android.view.animation.AnticipateOvershootInterpolator
-import android.view.animation.CycleInterpolator
 import timber.log.Timber
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 
 const val DEFAULT_WIDTH: Int = 300
 const val DEFAULT_HEIGHT: Int = 300
 
+const val MAX_CIRCLE_RADIUS: Float = 200f
+
+const val MAX_BEAM_GAP: Float = 30f
+const val MIN_BEAM_GAP: Float = 10f
+
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
+    private var viewType: Int = 0
+    private var viewColor: Int = Color.RED
 
-    private var rotationDirection: Int = 0
-    private var center: PointF = PointF(0f, 0f)
-    private var radius: Int = 5
     private var circleRadius = 100f
-    private var beamWidth = 10f
-    private var beamLength = 30f
-    private var beamGap = 10f
-    private var numberOfBeams = 8
+    private var beamWidth = 15f
+    private var beamLength = 50f
+    private var beamGap = MIN_BEAM_GAP
     private var phase = 0f
-    private var scale = 1f
-    private var beams: ArrayList<RectF> = ArrayList()
+
     private val rotationMatrix: Matrix = Matrix()
-    private val path = Path()
+    private val mainBeams: Array<RectF> = Array(4) {RectF()}
+    private val mainBeamsPath: Path = Path()
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 12f
-    }
-
-    private val paintBeam = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED
-        style = Paint.Style.FILL
-    }
-
-    private val paintBorder = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-        style = Paint.Style.STROKE
-        strokeWidth = 4f
-    }
-
-    private lateinit var animator: ValueAnimator
-    private lateinit var animator2: ValueAnimator
+    private var circlePaint: Paint
+    private val beamPaint: Paint
 
     private val onDownListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent?): Boolean {
@@ -62,51 +46,63 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         }
     }
 
+    private val beamPhaseAnimator = ValueAnimator.ofFloat(0f, 180f).apply {
+        interpolator = CustomInterpolator()
+        duration = 5000
+        repeatCount = ValueAnimator.INFINITE
+        addUpdateListener {
+            phase = it.animatedValue as Float
+            Timber.d("Phase: %f", phase)
+            //invalidate() // because of using AnimatorSet
+        }
+    }
+
+    private val beamGapAnimator = ValueAnimator.ofFloat(MIN_BEAM_GAP, MAX_BEAM_GAP).apply {
+        interpolator = CustomInterpolator()
+
+        duration = 5000
+        repeatCount = ValueAnimator.INFINITE
+        addUpdateListener {
+            beamGap = it.animatedValue as Float
+            Timber.d("Gap: %f", phase)
+            invalidate()
+        }
+    }
+
+    private val progressAnimator = AnimatorSet().apply {
+        play(beamPhaseAnimator).with(beamGapAnimator)
+    }
+
     private val detector: GestureDetector = GestureDetector(context, onDownListener)
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.ProgressView, 0, 0).apply {
             try {
-                rotationDirection = getInteger(R.styleable.ProgressView_rotationDirection, 0)
+                viewType = getInteger(R.styleable.ProgressView_type, 0)
+                viewColor = getColor(R.styleable.ProgressView_color, Color.RED)
             } finally {
                 recycle()
             }
         }
 
-        animator = ValueAnimator.ofFloat(0f, 359f).apply {
-            interpolator = AnticipateOvershootInterpolator()
-            duration = 10000
-            repeatCount = ValueAnimator.INFINITE
-            addUpdateListener {
-                phase = it.animatedValue as Float
-                invalidate()
-            }
+        circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = viewColor
+            style = if (viewType == 1) Paint.Style.FILL else Paint.Style.STROKE
+            strokeWidth = 12f
         }
 
-        animator2 = ValueAnimator.ofFloat(1f, 20f).apply {
-            //interpolator = AnticipateInterpolator()
-            //interpolator = AccelerateInterpolator()
-            //interpolator = BounceInterpolator()
-            //interpolator = CycleInterpolator(2f)
-            interpolator = AccelerateDecelerateInterpolator()
-
-            duration = 5000
-            repeatCount = ValueAnimator.INFINITE
-            addUpdateListener {
-                scale = it.animatedValue as Float
-                invalidate()
-            }
+        beamPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = viewColor
+            style = Paint.Style.FILL
         }
     }
 
     fun startProgress() {
-//        animator.start()
-        animator2.start()
+        progressAnimator.start()
     }
 
     fun stopProgress() {
-///        animator.cancel()
-        animator2.cancel()
+        progressAnimator.cancel()
     }
 
 
@@ -115,7 +111,7 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
         return detector.onTouchEvent(event).let {result ->
             if (result) {
-                if (animator.isStarted) {
+                if (progressAnimator.isStarted) {
                     stopProgress()
                 } else {
                     startProgress()
@@ -164,30 +160,10 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-
         Timber.d("onSizeChanged: %d, %d, %d, %d", w, h, oldw, oldh)
 
-        val cx = w/2f
-        val cy = h/2f
-
-        val beamRect = RectF(
-            cx - beamWidth / 2,
-            cy - circleRadius - beamGap - beamLength,
-            cx + beamWidth / 2,
-            cy - circleRadius - beamGap
-        )
-
-        val beamAngle = 360f/numberOfBeams
-
-        for(i in 0 until numberOfBeams) {
-            val beamPath = Path()
-            beamPath.addRect(beamRect, Path.Direction.CW)
-            rotationMatrix.reset()
-            rotationMatrix.setRotate(i * beamAngle, cx, cy)
-            beamPath.transform(rotationMatrix)
-            path.addPath(beamPath)
-        }
-
+        circleRadius = (min(w,h) - 2f* beamLength - 2f* MAX_BEAM_GAP)/2f
+        circleRadius = min(circleRadius, MAX_CIRCLE_RADIUS)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -221,33 +197,51 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
             val cx = width/2f
             val cy = height/2f
 
-            drawCircle(cx, cy, circleRadius, paint)
+            drawCircle(cx, cy, circleRadius, circlePaint)
+
+            mainBeams[0].set(cx - beamWidth / 2,
+                cy - circleRadius - beamGap - beamLength,
+                cx + beamWidth / 2,
+                cy - circleRadius - beamGap)
+
+            mainBeams[1].set(cx + circleRadius + beamGap,
+                cy - beamWidth/2,
+                cx + circleRadius + beamGap + beamLength,
+                cy + beamWidth/2)
+
+            mainBeams[2].set(cx - beamWidth / 2,
+                cy + circleRadius + beamGap,
+                cx + beamWidth / 2,
+                cy + circleRadius + beamGap + beamLength)
+
+            mainBeams[3].set(cx - circleRadius - beamGap - beamLength,
+                cy - beamWidth/2,
+                cx - circleRadius - beamGap,
+                cy + beamWidth/2)
+
+            mainBeamsPath.reset()
+            for (beam in mainBeams) {
+                mainBeamsPath.addRect(beam, Path.Direction.CW)
+            }
 
             rotationMatrix.reset()
             rotationMatrix.setRotate(phase, cx, cy)
-            path.transform(rotationMatrix)
+            mainBeamsPath.transform(rotationMatrix)
+            drawPath(mainBeamsPath, beamPaint)
 
-            drawPath(path, paintBeam)
+            rotationMatrix.reset()
+            rotationMatrix.setRotate(45f, cx, cy)
+            mainBeamsPath.transform(rotationMatrix)
+            drawPath(mainBeamsPath, beamPaint)
+        }
+    }
 
-//            val beam = RectF(
-//                cx - beamWidth / 2,
-//                cy - circleRadius - beamGap - beamLength,
-//                cx + beamWidth / 2,
-//                cy - circleRadius - beamGap)
-//
-//            drawRect(beam, paintBeam)
-//
-//            val beamAngle: Float = 360f/numberOfBeams
-//
-//            for(i in 1 until numberOfBeams) {
-//                path.reset()
-//                path.addRect(beam, Path.Direction.CW)
-//                rotationMatrix.reset()
-//                rotationMatrix.setRotate(beamAngle * i, cx, cy)
-//                path.transform(rotationMatrix)
-//                //beams.add(beam)
-//                drawPath(path, paintBeam)
-//            }
+    class CustomInterpolator: TimeInterpolator {
+
+        override fun getInterpolation(input: Float): Float {
+            val res: Float = (cos((input * 2f + 1) * Math.PI) / 2.0f).toFloat() + 0.5f
+            Timber.d("Intp: %f %f", input, res)
+            return res
         }
     }
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <declare-styleable name="ProgressView">
-    <attr name="rotationDirection" format="enum">
-        <enum name="clockwise" value="0"/>
-        <enum name="counterclockwise" value="1"/>
+    <attr name="type" format="enum">
+        <enum name="empty" value="0"/>
+        <enum name="filled" value="1"/>
     </attr>
+    <attr name="color" format="color"/>
 </declare-styleable>
 </resources>
