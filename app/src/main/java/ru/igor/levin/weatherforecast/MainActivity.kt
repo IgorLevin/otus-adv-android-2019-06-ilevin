@@ -8,15 +8,13 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.igor.levin.weatherforecast.network.OpenWeatherResponse
-import ru.igor.levin.weatherforecast.network.OpenWeatherApiService
+import ru.igor.levin.weatherforecast.network.OpenWeatherApiBase
+import ru.igor.levin.weatherforecast.network.OpenWeatherApiReactive
 
 class MainActivity : AppCompatActivity() {
 
-    private val appId: String = "2cf8752567a9645153f7dd316311fcbe" // API key
-    private val cityId: String = "524901" // Moscow
-
     private val weatherApi by lazy {
-        OpenWeatherApiService.create()
+        OpenWeatherApiReactive.create()
     }
 
     private var disposable: Disposable? = null
@@ -41,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getWeather() {
         disposable =
-            weatherApi.getWeather(cityId, appId)
+            weatherApi.getWeatherByCityId()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
