@@ -56,7 +56,6 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         repeatCount = ValueAnimator.INFINITE
         addUpdateListener {
             phase = it.animatedValue as Float
-            Timber.d("Phase: %f", phase)
             //invalidate() // because of using AnimatorSet
         }
     }
@@ -71,7 +70,6 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         repeatCount = ValueAnimator.INFINITE
         addUpdateListener {
             beamGap = it.animatedValue as Float
-            Timber.d("Gap: %f", phase)
             invalidate()
         }
     }
@@ -252,7 +250,6 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
         override fun getInterpolation(input: Float): Float {
             val res: Float = (cos((input * 2f + 1) * Math.PI) / 2.0f).toFloat() + 0.5f
-            Timber.d("Intp: %f %f", input, res)
             return res
         }
     }

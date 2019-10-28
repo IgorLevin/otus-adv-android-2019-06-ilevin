@@ -1,21 +1,37 @@
 package ru.igor.levin.weatherforecast.network
 
 import io.reactivex.Observable
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-interface OpenWeatherApiReactive: OpenWeatherApiBase<Observable<OpenWeatherResponse.Result>> {
+interface OpenWeatherApiReactive {
 
-    companion object {
-        fun create() : OpenWeatherApiReactive {
-            val retrofit = Retrofit.Builder()
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
-                .build()
+    @GET("weather")
+    fun getWeatherByCityId(
+        @Query("id") cityId: String = DEFAULT_CITY_ID,
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
 
-            return retrofit.create(OpenWeatherApiReactive::class.java)
-        }
-    }
+    @GET("weather")
+    fun getWeatherByCityName(
+        @Query("q") cityName: String = DEFAULT_CITY_NAME,
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
+
+    @GET("weather")
+    fun getWeatherByCountryCityName(
+        @Query("q") city: City = City(DEFAULT_CITY_NAME, DEFAULT_COUNTRY_CODE_ISO_3166),
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
+
+    @GET("weather")
+    fun getWeatherByCoordinates(
+        @Query("lat") latitude: String,
+        @Query("lon") longitude: String,
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
 }

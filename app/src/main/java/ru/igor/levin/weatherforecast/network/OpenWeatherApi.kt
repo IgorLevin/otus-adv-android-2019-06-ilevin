@@ -1,20 +1,41 @@
 package ru.igor.levin.weatherforecast.network
 
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-interface OpenWeatherApi : OpenWeatherApiBase<Call<OpenWeatherResponse.Result>> {
+interface OpenWeatherApi {
 
-    companion object {
-        fun create(): OpenWeatherApi {
+    @GET("weather")
+    fun getWeatherByCityId(
+        @Query("id") cityId: String = DEFAULT_CITY_ID,
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"
+    ): Call<OpenWeatherResponse.Result>
 
-            val retrofit = Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
-                .build()
+    @GET("weather")
+    fun getWeatherByCityName(
+        @Query("q") cityName: String = DEFAULT_CITY_NAME,
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"
+    ): Call<OpenWeatherResponse.Result>
 
-            return retrofit.create(OpenWeatherApi::class.java)
-        }
-    }
+    @GET("weather")
+    fun getWeatherByCountryCityName(
+        @Query("q") city: City = City(DEFAULT_CITY_NAME, DEFAULT_COUNTRY_CODE_ISO_3166),
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"
+    ): Call<OpenWeatherResponse.Result>
+
+    @GET("weather")
+    fun getWeatherByCoordinates(
+        @Query("lat") latitude: String,
+        @Query("lon") longitude: String,
+        @Query("appId") appId: String = APP_KEY,
+        @Query("lang") language: String = DEFAULT_LANGUAGE,
+        @Query("units") units: String = "metric"
+    ): Call<OpenWeatherResponse.Result>
 }

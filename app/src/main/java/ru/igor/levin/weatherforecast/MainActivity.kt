@@ -7,15 +7,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.igor.levin.weatherforecast.network.NetworkService
 import ru.igor.levin.weatherforecast.network.OpenWeatherResponse
-import ru.igor.levin.weatherforecast.network.OpenWeatherApiBase
 import ru.igor.levin.weatherforecast.network.OpenWeatherApiReactive
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
-    private val weatherApi by lazy {
-        OpenWeatherApiReactive.create()
-    }
+    private val networkService = NetworkService.instance
 
     private var disposable: Disposable? = null
 
@@ -26,26 +28,37 @@ class MainActivity : AppCompatActivity() {
         btGetWeather.setOnClickListener {
             showProgress(true)
             getWeather()
+            //getWeatherReactive()
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
+    private fun getWeatherReactive() {
+        disposable =
+            networkService.getOpenWeatherApiReactive()
+                .getWeatherByCityId()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { result -> showResult(result) },
+                        { error -> showError(error.message) }
+                    )
     }
 
     private fun getWeather() {
-        disposable =
-            weatherApi.getWeatherByCityId()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { result -> showResult(result) },
-                    { error -> showError(error.message) }
-                )
+        networkService.getOpenWeatherApi()
+            .getWeatherByCityId()
+            .enqueue(object : Callback<OpenWeatherResponse.Result> {
+                override fun onFailure(call: Call<OpenWeatherResponse.Result>, t: Throwable) {
+                    showError(t.localizedMessage)
+                }
+
+                override fun onResponse(
+                    call: Call<OpenWeatherResponse.Result>,
+                    response: Response<OpenWeatherResponse.Result>
+                ) {
+                    showResult(response.body())
+                }
+            })
     }
 
     private fun showProgress(show: Boolean) {
@@ -58,13 +71,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showResult(result: OpenWeatherResponse.Result) {
+    private fun showResult(result: OpenWeatherResponse.Result?) {
         showProgress(false)
-        textView.text = result.toString()
+        Timber.d(result?.toString())
+        textView.text = result?.toString()
     }
 
     private fun showError(message: String?) {
         showProgress(false)
+        Timber.d(message)
         textView.text = message
     }
 }
