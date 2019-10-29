@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast
+package ru.igor.levin.weatherforecast.ui
 
 import android.animation.*
 import android.content.Context
@@ -9,6 +9,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
+import ru.igor.levin.weatherforecast.R
 import timber.log.Timber
 import kotlin.math.cos
 import kotlin.math.max
@@ -22,6 +23,9 @@ const val MAX_CIRCLE_RADIUS: Float = 200f
 const val MAX_BEAM_GAP: Float = 30f
 const val MIN_BEAM_GAP: Float = 10f
 
+/**
+ * View looks like sun with 8 beams
+ */
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var viewType: Int = 0
@@ -52,19 +56,20 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         repeatCount = ValueAnimator.INFINITE
         addUpdateListener {
             phase = it.animatedValue as Float
-            Timber.d("Phase: %f", phase)
             //invalidate() // because of using AnimatorSet
         }
     }
 
-    private val beamGapAnimator = ValueAnimator.ofFloat(MIN_BEAM_GAP, MAX_BEAM_GAP).apply {
+    private val beamGapAnimator = ValueAnimator.ofFloat(
+        MIN_BEAM_GAP,
+        MAX_BEAM_GAP
+    ).apply {
         interpolator = CustomInterpolator()
 
         duration = 5000
         repeatCount = ValueAnimator.INFINITE
         addUpdateListener {
             beamGap = it.animatedValue as Float
-            Timber.d("Gap: %f", phase)
             invalidate()
         }
     }
@@ -76,7 +81,8 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
     private val detector: GestureDetector = GestureDetector(context, onDownListener)
 
     init {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.ProgressView, 0, 0).apply {
+        context.theme.obtainStyledAttributes(attrs,
+            R.styleable.ProgressView, 0, 0).apply {
             try {
                 viewType = getInteger(R.styleable.ProgressView_type, 0)
                 viewColor = getColor(R.styleable.ProgressView_color, Color.RED)
@@ -199,6 +205,7 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
             drawCircle(cx, cy, circleRadius, circlePaint)
 
+            // Create first 4 beams
             mainBeams[0].set(cx - beamWidth / 2,
                 cy - circleRadius - beamGap - beamLength,
                 cx + beamWidth / 2,
@@ -219,16 +226,19 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 cx - circleRadius - beamGap,
                 cy + beamWidth/2)
 
+            // Combine first 4 beams in the path
             mainBeamsPath.reset()
             for (beam in mainBeams) {
                 mainBeamsPath.addRect(beam, Path.Direction.CW)
             }
 
+            // Rotate path with first 4 beams to the current angle of animation
             rotationMatrix.reset()
             rotationMatrix.setRotate(phase, cx, cy)
             mainBeamsPath.transform(rotationMatrix)
             drawPath(mainBeamsPath, beamPaint)
 
+            // Rotate path once again for 45 degrees to get 8 beams
             rotationMatrix.reset()
             rotationMatrix.setRotate(45f, cx, cy)
             mainBeamsPath.transform(rotationMatrix)
@@ -240,7 +250,6 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
         override fun getInterpolation(input: Float): Float {
             val res: Float = (cos((input * 2f + 1) * Math.PI) / 2.0f).toFloat() + 0.5f
-            Timber.d("Intp: %f %f", input, res)
             return res
         }
     }
