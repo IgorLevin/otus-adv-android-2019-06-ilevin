@@ -10,76 +10,99 @@ import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.igor.levin.weatherforecast.network.NetworkService
-import ru.igor.levin.weatherforecast.network.OpenWeatherResponse
-import ru.igor.levin.weatherforecast.network.OpenWeatherApiReactive
+import ru.igor.levin.weatherforecast.model.network.NetworkService
+import ru.igor.levin.weatherforecast.model.network.OpenWeatherResponse
+import ru.igor.levin.weatherforecast.presenter.WeatherPresenter
+import ru.igor.levin.weatherforecast.view.WeatherView
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), WeatherView {
 
-    private val networkService = NetworkService.instance
-
-    private var disposable: Disposable? = null
+    private val serviceLocator by lazy {
+        ServiceLocator.instance(this)
+    }
+    private lateinit var presenter: WeatherPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        presenter = serviceLocator.getWeatherPresenter()
         setContentView(R.layout.activity_main)
 
         btGetWeather.setOnClickListener {
-            showProgress(true)
-            getWeather()
-            //getWeatherReactive()
+            presenter.getWeather()
         }
     }
 
-    private fun getWeatherReactive() {
-        disposable =
-            networkService.getOpenWeatherApiReactive()
-                .getWeatherByCityId()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { result -> showResult(result) },
-                        { error -> showError(error.message) }
-                    )
+    override fun onResume() {
+        super.onResume()
+        presenter.onViewActivated(this)
     }
 
-    private fun getWeather() {
-        networkService.getOpenWeatherApi()
-            .getWeatherByCityId()
-            .enqueue(object : Callback<OpenWeatherResponse.Result> {
-                override fun onFailure(call: Call<OpenWeatherResponse.Result>, t: Throwable) {
-                    showError(t.localizedMessage)
-                }
-
-                override fun onResponse(
-                    call: Call<OpenWeatherResponse.Result>,
-                    response: Response<OpenWeatherResponse.Result>
-                ) {
-                    showResult(response.body())
-                }
-            })
+    override fun onPause() {
+        super.onPause()
+        presenter.onViewDeactivated()
     }
 
-    private fun showProgress(show: Boolean) {
-        if (show) {
-            progress.visibility = View.VISIBLE
-            progress.startProgress()
-        } else {
-            progress.stopProgress()
-            progress.visibility = View.GONE
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.onViewDestroyed()
     }
 
-    private fun showResult(result: OpenWeatherResponse.Result?) {
-        showProgress(false)
-        Timber.d(result?.toString())
-        textView.text = result?.toString()
+    override fun showWeatherScreen() {
+        svWeatherDetails.visibility = View.VISIBLE
+        tvErrorInfo.visibility = View.GONE
     }
 
-    private fun showError(message: String?) {
-        showProgress(false)
-        Timber.d(message)
-        textView.text = message
+    override fun showTemperature(degrees: String) {
+        tvTemperature.text = degrees
+    }
+
+    override fun showHumidity(percent: String) {
+        tvHumidity.text = percent
+    }
+
+    override fun showPressure(mm: String) {
+        tvPressure.text = mm
+    }
+
+    override fun showWind(deg: String) {
+        tvWind.text = deg
+    }
+
+    override fun showPrecipitation(mm: String) {
+        tvPrecipitation.text = mm
+    }
+
+    override fun showDescription(info: String) {
+        tvDescription.text = info
+    }
+
+    override fun showCity(name: String) {
+        tvCity.text = name
+    }
+
+    override fun showCloudness(percent: String) {
+        tvCloudness.text = percent
+    }
+
+    override fun showError(msg: String?) {
+        Timber.d(msg)
+        svWeatherDetails.visibility = View.GONE
+        tvErrorInfo.visibility = View.VISIBLE
+        tvErrorInfo.text = msg
+    }
+
+    override fun showProgress() {
+        svWeatherDetails.visibility = View.GONE
+        tvErrorInfo.visibility = View.GONE
+
+        progress.visibility = View.VISIBLE
+        progress.startProgress()
+    }
+
+    override fun hideProgress() {
+        progress.stopProgress()
+        progress.visibility = View.GONE
     }
 }
