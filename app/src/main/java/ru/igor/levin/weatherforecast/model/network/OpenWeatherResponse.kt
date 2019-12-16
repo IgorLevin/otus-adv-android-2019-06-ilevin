@@ -1,10 +1,12 @@
 package ru.igor.levin.weatherforecast.model.network
 
+import androidx.annotation.Keep
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 
+@Keep
 object OpenWeatherResponse {
-
+    @Keep
     data class Result(
         var coord: Coordinates? = null,
         var weather: List<Weather>? = null,
@@ -26,19 +28,19 @@ object OpenWeatherResponse {
             return GsonBuilder().setPrettyPrinting().create().toJson(this)
         }
     }
-
+    @Keep
     data class Coordinates(
         var lon: String? = null,
         var lat: String? = null
     )
-
+    @Keep
     data class Weather(
         var id: String? = null,             // Weather condition id
         var main: String? = null,           // Group of weather parameters (Rain, Snow, Extreme etc.)
         var description: String? = null,    // Weather condition within the group
         var icon: String? = null            // Weather icon id
     )
-
+    @Keep
     data class Main(
         var temp: String? = null,           // Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
         var pressure: String? = null,       // Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data), hPa
@@ -48,30 +50,30 @@ object OpenWeatherResponse {
         var sea_level: String? = null,      // Atmospheric pressure on the sea level, hPa
         var grnd_level: String? = null      // Atmospheric pressure on the ground level, hPa
     )
-
+    @Keep
     data class Wind(
         var speed: String? = null,          // Wind speed. Unit Default: meter/sec, Metric: meter/sec, Imperial: miles/hour.
         var deg: String? = null             // Wind direction, degrees (meteorological)
     )
-
+    @Keep
     data class Clouds(
         var all: String? = null             // Cloudiness? = null, %
     )
-
+    @Keep
     data class Rain (
         @SerializedName("1h")
         var one_hour: String? = null,       // Rain volume for the last 1 hour, mm
         @SerializedName("3h")
         var three_hours: String? = null     // Rain volume for the last 3 hours, mm
     )
-
+    @Keep
     data class Snow (
         @SerializedName("1h")
         var one_hour: String? = null,       // Snow volume for the last 1 hour, mm
         @SerializedName("3h")
         var three_hours: String? = null     // Snow volume for the last 3 hours, mm
     )
-
+    @Keep
     data class Sys(
         var type: String? = null,           // Internal parameter
         var id: String? = null,             // Internal parameter
