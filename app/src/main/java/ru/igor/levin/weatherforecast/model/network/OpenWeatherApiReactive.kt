@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.network
+package ru.igor.levin.weatherforecast.model.network
 
 import io.reactivex.Observable
 import retrofit2.http.GET

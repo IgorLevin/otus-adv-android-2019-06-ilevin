@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.network
+package ru.igor.levin.weatherforecast.model.network
 
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient

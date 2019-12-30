@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.network
+package ru.igor.levin.weatherforecast.model.network
 
 import retrofit2.Call
 import retrofit2.http.GET
