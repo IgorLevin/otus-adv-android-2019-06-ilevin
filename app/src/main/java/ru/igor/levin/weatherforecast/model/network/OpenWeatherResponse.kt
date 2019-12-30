@@ -4,6 +4,10 @@ import androidx.annotation.Keep
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Most of class members names are taken without transformations from server response.
+ * Just for fun. Not for production.
+ */
 @Keep
 object OpenWeatherResponse {
     @Keep
@@ -62,16 +66,16 @@ object OpenWeatherResponse {
     @Keep
     data class Rain (
         @SerializedName("1h")
-        var one_hour: String? = null,       // Rain volume for the last 1 hour, mm
+        var oneHour: String? = null,       // Rain volume for the last 1 hour, mm
         @SerializedName("3h")
-        var three_hours: String? = null     // Rain volume for the last 3 hours, mm
+        var threeHours: String? = null     // Rain volume for the last 3 hours, mm
     )
     @Keep
     data class Snow (
         @SerializedName("1h")
-        var one_hour: String? = null,       // Snow volume for the last 1 hour, mm
+        var oneHour: String? = null,       // Snow volume for the last 1 hour, mm
         @SerializedName("3h")
-        var three_hours: String? = null     // Snow volume for the last 3 hours, mm
+        var threeHours: String? = null     // Snow volume for the last 3 hours, mm
     )
     @Keep
     data class Sys(

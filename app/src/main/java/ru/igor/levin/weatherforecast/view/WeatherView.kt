@@ -1,6 +1,6 @@
 package ru.igor.levin.weatherforecast.view
 
-interface WeatherView : BasicView {
+interface WeatherView : BaseView {
     fun showWeatherScreen()
     fun showDescription(info: String)
     fun showCity(name: String)
@@ -10,4 +10,5 @@ interface WeatherView : BasicView {
     fun showPressure(mm: String)
     fun showWind(info: String)
     fun showPrecipitation(info: String)
+    fun hidePrecipitation()
 }

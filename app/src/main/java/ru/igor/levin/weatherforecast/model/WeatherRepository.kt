@@ -39,10 +39,10 @@ class WeatherRepository(private val weatherApi: OpenWeatherApi) : WeatherModel {
                                 data.description = weather.description
                                 when(weather.main) {
                                     "Rain" -> {
-                                        data.rain = result.rain?.one_hour ?: result.rain?.three_hours
+                                        data.rain = result.rain?.oneHour ?: result.rain?.threeHours
                                     }
                                     "Snow" -> {
-                                        data.snow = result.show?.one_hour ?: result.show?.three_hours
+                                        data.snow = result.show?.oneHour ?: result.show?.threeHours
                                     }
                                 }
 

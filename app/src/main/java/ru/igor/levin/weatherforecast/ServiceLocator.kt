@@ -9,34 +9,23 @@ import ru.igor.levin.weatherforecast.model.network.OpenWeatherApi
 import ru.igor.levin.weatherforecast.presenter.WeatherPresenter
 import ru.igor.levin.weatherforecast.presenter.WeatherPresenterImpl
 
-interface ServiceLocator {
+class ServiceLocator private constructor(val app: Application){
 
     companion object {
         private val LOCK = Any()
         private var instance: ServiceLocator? = null
 
         fun instance(context: Context): ServiceLocator {
-            synchronized(LOCK) {
-                if (instance == null) {
-                    instance = DefaultServiceLocator(app = context.applicationContext as Application)
+            if (instance == null) {
+                synchronized(LOCK) {
+                    if (instance == null) {
+                        instance = ServiceLocator(app = context.applicationContext as Application)
+                    }
                 }
-                return instance!!
             }
+            return instance!!
         }
     }
-
-    fun getWeatherApi(): OpenWeatherApi
-
-    fun getWeatherPresenter(): WeatherPresenter
-
-    fun getWeatherModel(): WeatherModel
-}
-
-/**
- * default implementation of ServiceLocator that uses production endpoints.
- */
-open class DefaultServiceLocator(val app: Application) : ServiceLocator {
-
     private val api by lazy {
         NetworkService.instance.getOpenWeatherApi()
     }
@@ -49,15 +38,15 @@ open class DefaultServiceLocator(val app: Application) : ServiceLocator {
         WeatherPresenterImpl(model)
     }
 
-    override fun getWeatherApi(): OpenWeatherApi {
+    fun getWeatherApi(): OpenWeatherApi {
         return api
     }
 
-    override fun getWeatherPresenter(): WeatherPresenter {
+    fun getWeatherPresenter(): WeatherPresenter {
         return presenter
     }
 
-    override fun getWeatherModel(): WeatherModel {
+    fun getWeatherModel(): WeatherModel {
         return model
     }
 }

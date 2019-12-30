@@ -1,6 +1,6 @@
 package ru.igor.levin.weatherforecast.view
 
-interface BasicView {
+interface BaseView {
     fun showProgress()
     fun hideProgress()
 

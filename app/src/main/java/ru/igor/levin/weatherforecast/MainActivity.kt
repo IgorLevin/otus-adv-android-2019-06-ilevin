@@ -71,7 +71,12 @@ class MainActivity : AppCompatActivity(), WeatherView {
     }
 
     override fun showPrecipitation(mm: String) {
+        tvPrecipitation.visibility = View.VISIBLE
         tvPrecipitation.text = mm
+    }
+
+    override fun hidePrecipitation() {
+        tvPrecipitation.visibility = View.GONE
     }
 
     override fun showDescription(info: String) {

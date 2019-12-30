@@ -7,12 +7,14 @@ import ru.igor.levin.weatherforecast.view.WeatherView
 import java.lang.ref.WeakReference
 import java.util.*
 
-private const val HPA_IN_MMHG: Double = 1.3332239
-
 class WeatherPresenterImpl(private val repository: WeatherRepository) : WeatherPresenter {
 
     private var viewRef: WeakReference<WeatherView>? = null
     private var modelResponse: WeatherModelResponse<WeatherModelData>? = null
+
+    companion object {
+        private const val HPA_IN_MMHG: Double = 1.3332239
+    }
 
     override fun onViewActivated(view: WeatherView) {
         viewRef = WeakReference(view)
@@ -41,23 +43,25 @@ class WeatherPresenterImpl(private val repository: WeatherRepository) : WeatherP
     }
 
     private fun onModelDataUpdated(modelResponse: WeatherModelResponse<WeatherModelData>) {
-        when (modelResponse) {
-            is WeatherModelResponse.Success -> {
-                getView()?.hideProgress()
-                showWeather(modelResponse.data!!)
-            }
-            is WeatherModelResponse.Error -> {
-                getView()?.hideProgress()
-                getView()?.showError(modelResponse.msg)
-            }
-            is WeatherModelResponse.Loading -> {
-                getView()?.showProgress()
+        getView()?.let { view ->
+            when (modelResponse) {
+                is WeatherModelResponse.Success -> {
+                    view.hideProgress()
+                    showWeather(view, modelResponse.data!!)
+                }
+                is WeatherModelResponse.Error -> {
+                    view.hideProgress()
+                    view.showError(modelResponse.msg)
+                }
+                is WeatherModelResponse.Loading -> {
+                    view.showProgress()
+                }
             }
         }
     }
 
-    private fun showWeather(data: WeatherModelData) {
-        getView()?.apply {
+    private fun showWeather(view: WeatherView, data: WeatherModelData) {
+        view.apply {
             showWeatherScreen()
 
             showCity(data.city ?: " - ")
@@ -71,6 +75,8 @@ class WeatherPresenterImpl(private val repository: WeatherRepository) : WeatherP
             }
             if (data.snow != null || data.rain != null) {
                 showPrecipitation(if (data.snow.isNullOrEmpty()) data.rain!! else data.snow!!)
+            } else {
+                hidePrecipitation()
             }
             if (!data.windDirection.isNullOrEmpty()) {
                 showWind("${data.windSpeed} [${data.windDirection}°]")
