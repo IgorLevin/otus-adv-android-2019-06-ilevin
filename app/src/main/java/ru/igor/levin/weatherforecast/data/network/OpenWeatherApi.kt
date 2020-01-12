@@ -1,8 +1,9 @@
-package ru.igor.levin.weatherforecast.model.network
+package ru.igor.levin.weatherforecast.data.network
 
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.igor.levin.weatherforecast.data.dto.OpenWeatherResponse
 
 interface OpenWeatherApi {
 
@@ -12,7 +13,7 @@ interface OpenWeatherApi {
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
         @Query("units") units: String = "metric"
-    ): Call<OpenWeatherResponse.Result>
+    ): Call<OpenWeatherResponse>
 
     @GET("weather")
     fun getWeatherByCityName(
@@ -20,7 +21,7 @@ interface OpenWeatherApi {
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
         @Query("units") units: String = "metric"
-    ): Call<OpenWeatherResponse.Result>
+    ): Call<OpenWeatherResponse>
 
     @GET("weather")
     fun getWeatherByCountryCityName(
@@ -28,7 +29,7 @@ interface OpenWeatherApi {
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
         @Query("units") units: String = "metric"
-    ): Call<OpenWeatherResponse.Result>
+    ): Call<OpenWeatherResponse>
 
     @GET("weather")
     fun getWeatherByCoordinates(
@@ -37,5 +38,5 @@ interface OpenWeatherApi {
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
         @Query("units") units: String = "metric"
-    ): Call<OpenWeatherResponse.Result>
+    ): Call<OpenWeatherResponse>
 }

@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.view
+package ru.igor.levin.weatherforecast.presentation.view
 
 interface BaseView {
     fun showProgress()

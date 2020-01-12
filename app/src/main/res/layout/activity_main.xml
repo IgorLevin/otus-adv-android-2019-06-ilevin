@@ -5,10 +5,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".presentation.view.MainActivity">
 
 
-    <ru.igor.levin.weatherforecast.ui.ProgressView
+    <ru.igor.levin.weatherforecast.presentation.view.ProgressView
             android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btGetWeather"
+            app:layout_constraintBottom_toTopOf="@+id/btUpdateWeather"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +48,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
 
-            app:layout_constraintBottom_toTopOf="@+id/btGetWeather"
+            app:layout_constraintBottom_toTopOf="@+id/btUpdateWeather"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -66,7 +66,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Местоположение: " />
+                        android:text="@string/location_label" />
                 <TextView
                         android:id="@+id/tvCity"
                         android:layout_width="0dp"
@@ -84,7 +84,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Погода: " />
+                        android:text="@string/weather_label" />
                 <TextView
                         android:id="@+id/tvDescription"
                         android:layout_width="0dp"
@@ -101,7 +101,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Температура, °C: " />
+                        android:text="@string/temperature_label" />
                 <TextView
                         android:id="@+id/tvTemperature"
                         android:layout_width="0dp"
@@ -118,9 +118,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Облачность, %: " />
+                        android:text="@string/clouds_label" />
                 <TextView
-                        android:id="@+id/tvCloudness"
+                        android:id="@+id/tvClouds"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -135,7 +135,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Давление, мм.рт.ст: " />
+                        android:text="@string/pressure_label" />
                 <TextView
                         android:id="@+id/tvPressure"
                         android:layout_width="0dp"
@@ -152,7 +152,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Влажность, %: " />
+                        android:text="@string/humidity_label" />
                 <TextView
                         android:id="@+id/tvHumidity"
                         android:layout_width="0dp"
@@ -169,7 +169,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Ветер, м/с: " />
+                        android:text="@string/wind_label" />
                 <TextView
                         android:id="@+id/tvWind"
                         android:layout_width="0dp"
@@ -186,7 +186,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Осадки, мм: " />
+                        android:text="@string/precipitation_label" />
                 <TextView
                         android:id="@+id/tvPrecipitation"
                         android:layout_width="0dp"
@@ -200,8 +200,8 @@
     </ScrollView>
 
     <Button
-            android:id="@+id/btGetWeather"
-            android:text="GET WEATHER"
+            android:id="@+id/btUpdateWeather"
+            android:text="@string/update_button_label"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"

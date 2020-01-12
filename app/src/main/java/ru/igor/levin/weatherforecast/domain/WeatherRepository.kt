@@ -1,8 +1,8 @@
-package ru.igor.levin.weatherforecast.model
+package ru.igor.levin.weatherforecast.domain
 
 import java.util.*
 
-interface WeatherModel {
+interface WeatherRepository {
     fun getWeather(observer: Observer)
     fun cancelRequest()
 }

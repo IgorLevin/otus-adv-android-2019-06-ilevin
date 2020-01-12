@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.model.network
+package ru.igor.levin.weatherforecast.data.dto
 
 import androidx.annotation.Keep
 import com.google.gson.GsonBuilder
@@ -9,29 +9,27 @@ import com.google.gson.annotations.SerializedName
  * Just for fun. Not for production.
  */
 @Keep
-object OpenWeatherResponse {
-    @Keep
-    data class Result(
-        var coord: Coordinates? = null,
-        var weather: List<Weather>? = null,
-        var base: String? = null,           // Internal parameter
-        var main: Main? = null,
-        var visibility: String? = null,
-        var wind: Wind? = null,
-        var clouds: Clouds? = null,
-        var rain: Rain? = null,
-        var show: Snow? = null,
-        var dt: String? = null,             // Time of data calculation, unix, UTC
-        var sys: Sys? = null,
-        var timezone: String? = null,       // Shift in seconds from UTC
-        var id: String? = null,             // City id
-        var name: String? = null,           // City name
-        var cod: String? = null)            // Internal parameter
-    {
-        override fun toString(): String {
-            return GsonBuilder().setPrettyPrinting().create().toJson(this)
-        }
+data class OpenWeatherResponse(
+    var coord: Coordinates? = null,
+    var weather: List<Weather>? = null,
+    var base: String? = null,           // Internal parameter
+    var main: Main? = null,
+    var visibility: String? = null,
+    var wind: Wind? = null,
+    var clouds: Clouds? = null,
+    var rain: Rain? = null,
+    var show: Snow? = null,
+    var dt: String? = null,             // Time of data calculation, unix, UTC
+    var sys: Sys? = null,
+    var timezone: String? = null,       // Shift in seconds from UTC
+    var id: String? = null,             // City id
+    var name: String? = null,           // City name
+    var cod: String? = null)            // Internal parameter
+{
+    override fun toString(): String {
+        return GsonBuilder().setPrettyPrinting().create().toJson(this)
     }
+
     @Keep
     data class Coordinates(
         var lon: String? = null,
@@ -87,3 +85,4 @@ object OpenWeatherResponse {
         var sunset: String? = null          // Sunset time, unix, UTC
     )
 }
+

@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.ui
+package ru.igor.levin.weatherforecast.presentation.view
 
 import android.animation.*
 import android.content.Context
@@ -34,7 +34,8 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
     private var circleRadius = 100f
     private var beamWidth = 15f
     private var beamLength = 50f
-    private var beamGap = MIN_BEAM_GAP
+    private var beamGap =
+        MIN_BEAM_GAP
     private var phase = 0f
 
     private val rotationMatrix: Matrix = Matrix()
@@ -51,7 +52,8 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
     }
 
     private val beamPhaseAnimator = ValueAnimator.ofFloat(0f, 180f).apply {
-        interpolator = CustomInterpolator()
+        interpolator =
+            CustomInterpolator()
         duration = 5000
         repeatCount = ValueAnimator.INFINITE
         addUpdateListener {
@@ -64,7 +66,8 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         MIN_BEAM_GAP,
         MAX_BEAM_GAP
     ).apply {
-        interpolator = CustomInterpolator()
+        interpolator =
+            CustomInterpolator()
 
         duration = 5000
         repeatCount = ValueAnimator.INFINITE
@@ -169,7 +172,9 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         Timber.d("onSizeChanged: %d, %d, %d, %d", w, h, oldw, oldh)
 
         circleRadius = (min(w,h) - 2f* beamLength - 2f* MAX_BEAM_GAP)/2f
-        circleRadius = min(circleRadius, MAX_CIRCLE_RADIUS)
+        circleRadius = min(circleRadius,
+            MAX_CIRCLE_RADIUS
+        )
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

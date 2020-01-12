@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">WeatherForecast</string>
+    <string name="update_button_label">ОБНОВИТЬ</string>
+    <string name="location_label">Местоположение:</string>
+    <string name="weather_label">Погода:</string>
+    <string name="temperature_label">Температура, °C:</string>
+    <string name="clouds_label">Облачность, %:</string>
+    <string name="pressure_label">Давление, мм.рт.ст:</string>
+    <string name="humidity_label">Влажность, %:</string>
+    <string name="wind_label">Ветер, м/с:</string>
+    <string name="precipitation_label">Осадки, мм:</string>
 </resources>
