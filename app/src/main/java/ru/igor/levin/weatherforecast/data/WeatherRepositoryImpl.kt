@@ -14,7 +14,6 @@ class WeatherRepositoryImpl(private val weatherApi: OpenWeatherApi)
     : WeatherRepository
 {
     private val observable = ModelObservable()
-    private var call: Call<OpenWeatherResponse>? = null
 
     override fun getWeather(observer: Observer) {
         observable.addObserver(observer)
@@ -24,9 +23,7 @@ class WeatherRepositoryImpl(private val weatherApi: OpenWeatherApi)
             .enqueue(object : Callback<OpenWeatherResponse> {
                 override fun onFailure(call: Call<OpenWeatherResponse>, t: Throwable) {
                     observable.notify(
-                        WeatherLoadingState.Error(
-                            t.localizedMessage
-                        )
+                        WeatherLoadingState.Error(t.localizedMessage)
                     )
                 }
 
@@ -38,9 +35,7 @@ class WeatherRepositoryImpl(private val weatherApi: OpenWeatherApi)
                         val result = response.body()!!
                         val data = WeatherResponseMapper.transformWeatherResponse(result)
 
-                        observable.notify(
-                            WeatherLoadingState.Success(data)
-                        )
+                        observable.notify(WeatherLoadingState.Success(data))
                     } else {
                         observable.notify(
                             WeatherLoadingState.Error(
@@ -54,17 +49,17 @@ class WeatherRepositoryImpl(private val weatherApi: OpenWeatherApi)
 
     override fun cancelRequest() {
         observable.deleteObservers()
-        call?.cancel()
     }
-}
 
-class ModelObservable: Observable() {
+    class ModelObservable: Observable() {
 
-    fun notify(result: Any, deleteObservers: Boolean = true) {
-        setChanged()
-        notifyObservers(result)
-        if (deleteObservers) {
-            deleteObservers()
+        fun notify(result: Any, deleteObservers: Boolean = true) {
+            setChanged()
+            notifyObservers(result)
+            if (deleteObservers) {
+                deleteObservers()
+            }
         }
     }
 }
+

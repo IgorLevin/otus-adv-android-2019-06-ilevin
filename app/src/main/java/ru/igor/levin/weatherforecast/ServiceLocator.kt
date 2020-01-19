@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import ru.igor.levin.weatherforecast.data.WeatherRepositoryImpl
 import ru.igor.levin.weatherforecast.data.network.NetworkService
-import ru.igor.levin.weatherforecast.domain.interactor.WeatherInteractorImpl
+import ru.igor.levin.weatherforecast.domain.interactor.WeatherInteractor
 import ru.igor.levin.weatherforecast.presentation.presenter.WeatherPresenter
 import ru.igor.levin.weatherforecast.presentation.presenter.WeatherPresenterImpl
 
@@ -29,20 +29,20 @@ class ServiceLocator private constructor(val app: Application){
         NetworkService.instance().getOpenWeatherApi()
     }
 
-    private val repository by lazy {
+    private val weatherRepository by lazy {
         WeatherRepositoryImpl(api)
     }
 
-    private val interactor by lazy {
-        WeatherInteractorImpl(repository)
+    private val weatherInteractor by lazy {
+        WeatherInteractor(weatherRepository)
     }
 
-    private val presenter by lazy {
-        WeatherPresenterImpl(interactor)
+    private val weatherPresenter by lazy {
+        WeatherPresenterImpl(weatherInteractor)
     }
 
     fun getWeatherPresenter(): WeatherPresenter {
-        return presenter
+        return weatherPresenter
     }
 
 }
