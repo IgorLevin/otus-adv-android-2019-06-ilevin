@@ -6,8 +6,16 @@ import timber.log.Timber.DebugTree
 
 class WeatherApplication : Application() {
 
+    val component by lazy {
+        DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
+    }
+
     override fun onCreate() {
         super.onCreate()
+
+        component.inject(this)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
