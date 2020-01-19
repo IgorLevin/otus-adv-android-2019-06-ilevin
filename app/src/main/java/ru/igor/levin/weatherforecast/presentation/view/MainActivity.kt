@@ -1,19 +1,12 @@
-package ru.igor.levin.weatherforecast
+package ru.igor.levin.weatherforecast.presentation.view
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.igor.levin.weatherforecast.model.network.NetworkService
-import ru.igor.levin.weatherforecast.model.network.OpenWeatherResponse
-import ru.igor.levin.weatherforecast.presenter.WeatherPresenter
-import ru.igor.levin.weatherforecast.view.WeatherView
+import ru.igor.levin.weatherforecast.R
+import ru.igor.levin.weatherforecast.ServiceLocator
+import ru.igor.levin.weatherforecast.presentation.presenter.WeatherPresenter
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), WeatherView {
@@ -29,8 +22,8 @@ class MainActivity : AppCompatActivity(), WeatherView {
         presenter = serviceLocator.getWeatherPresenter()
         setContentView(R.layout.activity_main)
 
-        btGetWeather.setOnClickListener {
-            presenter.getWeather()
+        btUpdateWeather.setOnClickListener {
+            presenter.updateWeather()
         }
     }
 
@@ -66,13 +59,13 @@ class MainActivity : AppCompatActivity(), WeatherView {
         tvPressure.text = mm
     }
 
-    override fun showWind(deg: String) {
-        tvWind.text = deg
+    override fun showWind(direction: String) {
+        tvWind.text = direction
     }
 
-    override fun showPrecipitation(mm: String) {
+    override fun showPrecipitation(levelInMm: String) {
         tvPrecipitation.visibility = View.VISIBLE
-        tvPrecipitation.text = mm
+        tvPrecipitation.text = levelInMm
     }
 
     override fun hidePrecipitation() {
@@ -87,8 +80,8 @@ class MainActivity : AppCompatActivity(), WeatherView {
         tvCity.text = name
     }
 
-    override fun showCloudness(percent: String) {
-        tvCloudness.text = percent
+    override fun showClouds(percent: String) {
+        tvClouds.text = percent
     }
 
     override fun showError(msg: String?) {

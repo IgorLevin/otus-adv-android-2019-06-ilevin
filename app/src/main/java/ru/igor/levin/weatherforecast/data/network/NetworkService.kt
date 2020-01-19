@@ -1,4 +1,4 @@
-package ru.igor.levin.weatherforecast.model.network
+package ru.igor.levin.weatherforecast.data.network
 
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
@@ -14,7 +14,20 @@ class NetworkService private constructor() {
     private val retrofitReactive: Retrofit
 
     companion object {
-        val instance = NetworkService()
+
+        private val LOCK = Any()
+        private var instance: NetworkService? = null
+
+        fun instance(): NetworkService {
+            if (instance == null) {
+                synchronized(LOCK) {
+                    if (instance == null) {
+                        instance = NetworkService()
+                    }
+                }
+            }
+            return instance!!
+        }
     }
 
     init {

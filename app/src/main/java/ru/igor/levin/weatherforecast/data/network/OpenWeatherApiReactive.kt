@@ -1,8 +1,9 @@
-package ru.igor.levin.weatherforecast.model.network
+package ru.igor.levin.weatherforecast.data.network
 
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.igor.levin.weatherforecast.data.dto.OpenWeatherResponse
 
 interface OpenWeatherApiReactive {
 
@@ -11,21 +12,21 @@ interface OpenWeatherApiReactive {
         @Query("id") cityId: String = DEFAULT_CITY_ID,
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
-        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse>
 
     @GET("weather")
     fun getWeatherByCityName(
         @Query("q") cityName: String = DEFAULT_CITY_NAME,
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
-        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse>
 
     @GET("weather")
     fun getWeatherByCountryCityName(
         @Query("q") city: City = City(DEFAULT_CITY_NAME, DEFAULT_COUNTRY_CODE_ISO_3166),
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
-        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse>
 
     @GET("weather")
     fun getWeatherByCoordinates(
@@ -33,5 +34,5 @@ interface OpenWeatherApiReactive {
         @Query("lon") longitude: String,
         @Query("appId") appId: String = APP_KEY,
         @Query("lang") language: String = DEFAULT_LANGUAGE,
-        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse.Result>
+        @Query("units") units: String = "metric"): Observable<OpenWeatherResponse>
 }

@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 # Just wondering
--whyareyoukeeping class ru.igor.levin.weatherforecast.MainActivity
+-whyareyoukeeping class ru.igor.levin.weatherforecast.presentation.view.MainActivity
 
 # Print result proguard/r8 configuration include library proguard/r8 settings
 -printconfiguration ./build/tmp/r8-config.txt
