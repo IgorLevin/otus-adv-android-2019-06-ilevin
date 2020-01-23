@@ -5,8 +5,9 @@ import ru.igor.levin.weatherforecast.domain.entity.Weather
 import ru.igor.levin.weatherforecast.domain.interactor.WeatherInteractor
 import ru.igor.levin.weatherforecast.presentation.view.WeatherView
 import java.lang.ref.WeakReference
+import javax.inject.Inject
 
-class WeatherPresenterImpl(
+class WeatherPresenterImpl @Inject constructor(
     private val weatherInteractor: WeatherInteractor
 )
     : WeatherPresenter, WeatherInteractor.Listener

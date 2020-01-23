@@ -5,21 +5,20 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.igor.levin.weatherforecast.R
-import ru.igor.levin.weatherforecast.ServiceLocator
+import ru.igor.levin.weatherforecast.WeatherApplication
 import ru.igor.levin.weatherforecast.presentation.presenter.WeatherPresenter
 import timber.log.Timber
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), WeatherView {
 
-    private val serviceLocator by lazy {
-        ServiceLocator.instance(this)
-    }
-    private lateinit var presenter: WeatherPresenter
+    @Inject
+    lateinit var presenter: WeatherPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as WeatherApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
 
-        presenter = serviceLocator.getWeatherPresenter()
         setContentView(R.layout.activity_main)
 
         btUpdateWeather.setOnClickListener {

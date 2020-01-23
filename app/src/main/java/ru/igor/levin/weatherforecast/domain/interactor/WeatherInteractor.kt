@@ -4,8 +4,10 @@ import ru.igor.levin.weatherforecast.domain.WeatherLoadingState
 import ru.igor.levin.weatherforecast.domain.WeatherRepository
 import ru.igor.levin.weatherforecast.domain.entity.Weather
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WeatherInteractor (
+class WeatherInteractor @Inject constructor(
     private val repository: WeatherRepository
 )
 {

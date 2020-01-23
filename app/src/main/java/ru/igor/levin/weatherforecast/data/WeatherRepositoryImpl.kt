@@ -9,9 +9,11 @@ import ru.igor.levin.weatherforecast.data.network.OpenWeatherApi
 import ru.igor.levin.weatherforecast.domain.WeatherLoadingState
 import ru.igor.levin.weatherforecast.domain.WeatherRepository
 import java.util.*
+import javax.inject.Inject
 
-class WeatherRepositoryImpl(private val weatherApi: OpenWeatherApi)
-    : WeatherRepository
+class WeatherRepositoryImpl @Inject constructor(
+    private val weatherApi: OpenWeatherApi
+) : WeatherRepository
 {
     private val observable = ModelObservable()
 
