@@ -9,7 +9,7 @@ import timber.log.Timber.DebugTree
 class WeatherApplication : Application() {
 
     val appComponent: AppComponent by lazy {
-        DaggerAppComponent.factory().create(applicationContext)
+        DaggerAppComponent.factory().create(this)
     }
 
     override fun onCreate() {

@@ -10,6 +10,7 @@ import ru.igor.levin.weatherforecast.domain.WeatherLoadingState
 import ru.igor.levin.weatherforecast.domain.WeatherRepository
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: OpenWeatherApi

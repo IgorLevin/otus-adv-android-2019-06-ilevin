@@ -1,5 +1,6 @@
 package ru.igor.levin.weatherforecast.di
 
+import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
@@ -15,8 +16,17 @@ interface AppComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance context: Context): AppComponent
+        fun create(@BindsInstance app: Application): AppComponent
     }
+
+//   Альтернативный вариант создания компонента
+//
+//    @Component.Builder
+//    interface Builder {
+//        @BindsInstance
+//        fun appContext(context: Context): Builder
+//        fun build(): AppComponent
+//    }
 
     fun inject(activity: MainActivity)
 }

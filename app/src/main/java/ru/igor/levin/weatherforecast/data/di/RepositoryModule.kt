@@ -7,6 +7,12 @@ import ru.igor.levin.weatherforecast.domain.WeatherRepository
 
 @Module
 abstract class RepositoryModule {
+
     @Binds
     abstract fun provideWeatherRepository(repo: WeatherRepositoryImpl): WeatherRepository
+
+//    Альтернативный вариант
+//    @Provides
+//    fun provideWeatherRepository(api: OpenWeatherApi): WeatherRepository = WeatherRepositoryImpl(api)
+
 }
